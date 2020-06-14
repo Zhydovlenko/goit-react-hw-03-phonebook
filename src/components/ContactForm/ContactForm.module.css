@@ -1,0 +1,21 @@
+.form {
+  width: 350px;
+  padding: 10px 20px;
+  border: 1px solid #131111;
+  margin-bottom: 10px;
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: 14px;
+  font-size: 16px;
+  color: #171718;
+  cursor: pointer;
+}
+
+.formInput {
+  color: #171718;
+  font-size: 12px;
+  padding: 10px;
+  margin-bottom: 10px;
+}

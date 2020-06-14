@@ -1,0 +1,15 @@
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.btn {
+  font-size: 12px;
+  margin-right: 6px;
+  margin-left: 6px;
+  width: 50px;
+  height: 20px;
+}
