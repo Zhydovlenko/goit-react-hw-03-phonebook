@@ -1,68 +1,71 @@
-import React, { Component } from "react";
-import shortid from "shortid";
-import ContactForm from "../ContactForm/ContactForm";
-import ContactList from "../ContactList/ContactList";
-import Filter from "../Filter/Filter";
-import styles from "./App.module.css";
+import React, { Component } from 'react';
+import shortid from 'shortid';
+import { toast } from 'react-toastify';
+
+import ContactForm from '../ContactForm/ContactForm';
+import ContactList from '../ContactList/ContactList';
+import Filter from '../Filter/Filter';
+import methods from '../../utils/methods';
+
+import styles from './App.module.css';
+import 'react-toastify/dist/ReactToastify.css';
+
+const { save, get } = methods;
 
 export default class App extends Component {
   state = {
     contacts: [],
-    filter: "",
+    filter: '',
   };
 
   componentDidMount() {
-    const persistedContacts = localStorage.getItem("contacts");
-
-    if (persistedContacts) {
+    if (get('contacts')) {
       this.setState({
-        contacts: JSON.parse(persistedContacts),
+        contacts: [...get('contacts')],
       });
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.contacts !== this.state.contacts) {
-      localStorage.setItem("contacts", JSON.stringify(this.state.contacts));
+      save('contacts', this.state.contacts);
     }
   }
 
-  changeFilter = (filter) => {
+  changeFilter = filter => {
     this.setState({ filter });
   };
 
-  addContact = (contact) => {
-    const isUniqueContact = this.state.contacts.some(
-      (savedContact) =>
-        savedContact.name.toLowerCase() === contact.name.toLowerCase()
+  addContact = contact => {
+    const isContactExist = this.state.contacts.some(
+      savedContact =>
+        savedContact.name.toLowerCase() === contact.name.toLowerCase(),
     );
 
-    if (isUniqueContact) {
-      return alert(`${contact.name} is already in contacts.`);
+    if (isContactExist) {
+      toast.configure();
+      toast.error(`${contact.name} is already in contacts.`);
+    } else {
+      const contactToAdd = {
+        ...contact,
+        id: shortid.generate(),
+      };
+      this.setState(state => ({
+        contacts: [...state.contacts, contactToAdd],
+      }));
     }
-
-    const contactToAdd = {
-      ...contact,
-      id: shortid.generate(),
-    };
-
-    this.setState((state) => ({
-      contacts: [...state.contacts, contactToAdd],
-    }));
-
-    return;
   };
 
-  deleteContact = (id) => {
-    this.setState((state) => ({
-      contacts: state.contacts.filter((contact) => contact.id !== id),
-      filter: "",
+  deleteContact = id => {
+    this.setState(state => ({
+      contacts: state.contacts.filter(contact => contact.id !== id),
+      filter: '',
     }));
   };
 
   filterContacts = (contacts, filter) => {
-    return contacts.filter((contact) =>
-      contact.name.toLowerCase().includes(filter.toLowerCase())
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(filter.toLowerCase()),
     );
   };
 

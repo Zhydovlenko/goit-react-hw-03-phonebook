@@ -1,7 +1,9 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import shortid from "shortid";
-import styles from "./ContactForm.module.css";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+import generateId from '../../utils/generateId';
+
+import styles from './ContactForm.module.css';
 
 export default class ContactForm extends Component {
   static propTypes = {
@@ -9,35 +11,34 @@ export default class ContactForm extends Component {
   };
 
   state = {
-    name: "",
-    number: "",
+    name: '',
+    number: '',
   };
 
-  handleChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
+  handleChange = ({ target: { value, name } }) => {
+    this.setState({ [name]: value });
   };
 
-  handleSubmit = (e) => {
+  handleSubmit = e => {
     e.preventDefault();
 
     this.props.onAddContact({ ...this.state });
 
-    this.setState({
-      name: "",
-      number: "",
-    });
+    this.reset();
   };
 
-  nameInputId = shortid.generate();
-  numberInputId = shortid.generate();
+  reset = () => {
+    this.setState({ name: '', number: '' });
+  };
 
   render() {
     const { name, number } = this.state;
+    const { nameInputId, numberInputId } = generateId;
 
     return (
       <form onSubmit={this.handleSubmit} className={styles.form}>
         <div>
-          <label className={styles.formLabel} htmlFor={this.nameInputId}>
+          <label className={styles.formLabel} htmlFor={nameInputId}>
             Name
           </label>
           <input
@@ -46,12 +47,11 @@ export default class ContactForm extends Component {
             value={name}
             onChange={this.handleChange}
             name="name"
-            id={this.nameInputId}
-            required
+            id={nameInputId}
           />
         </div>
         <div>
-          <label className={styles.formLabel} htmlFor={this.numberInputId}>
+          <label className={styles.formLabel} htmlFor={numberInputId}>
             Number
           </label>
           <input
@@ -60,11 +60,12 @@ export default class ContactForm extends Component {
             value={number}
             onChange={this.handleChange}
             name="number"
-            id={this.numberInputId}
-            required
+            id={numberInputId}
           />
         </div>
-        <button type="submit">Add contact</button>
+        <button type="submit" disabled={!name.length || !number.length}>
+          Add contact
+        </button>
       </form>
     );
   }
